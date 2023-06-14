@@ -1,0 +1,5 @@
+name: SimpleGranter
+version: '${version}'
+main: com.jodexindustries.simplegranter.SimpleGranter
+authors: [_Jodex__]
+description: Simple grant plugin for minecraft server
