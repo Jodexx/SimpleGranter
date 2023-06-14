@@ -26,21 +26,6 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         if(args.length == 0) {
             sendHelp(sender);
         } else {
-            if(args[0].equalsIgnoreCase("list")) {
-                Player player = (Player) sender;
-                Minecart minecart = player.getWorld().spawn(player.getLocation(), Minecart.class);
-                minecart.setPassenger(player);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        minecart.setVelocity(player.getLocation().getDirection());
-                        if(minecart.getPassengers().isEmpty()) {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(plugin, 5L, 5L);
-                minecart.setVelocity(player.getLocation().getDirection());
-            } else
             if(args[0].equalsIgnoreCase("reload")) {
                 if(sender.hasPermission("simplegranter.admin")) {
                     yaml.reload();
@@ -55,8 +40,11 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                         Player target = Bukkit.getPlayerExact(args[0]);
                         String group = args[1];
                         String senderGroup = perms.getPrimaryGroup(player);
+                        String targetGroup = perms.getPrimaryGroup(target);
                         int groupInConfig = yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group,0);
                         int groupCountInData = yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
+                        int targetGroupLevel = yaml.getConfig().getInt("Settings.Levels." + targetGroup, 0);
+                        int groupLevel = yaml.getConfig().getInt("Settings.Levels." + group, 0);
                         List<String> groupsList = new ArrayList<>();
                         Collections.addAll(groupsList, perms.getGroups());
                         if (target != null) {
@@ -66,20 +54,24 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                     if(groupsList.contains(group)) {
                                         if (groupInConfig != 0) {
                                             if (groupCountInData < groupInConfig) {
-                                                String giveCommand = yaml.getConfig().getString("Settings.GiveCommand")
-                                                        .replaceAll("%group%", group)
-                                                        .replaceAll("%target%", target.getName());
-                                                String giveBroadCast = yaml.getConfig().getString("Settings.GiveBroadCast")
-                                                        .replaceAll("%player%", player.getName())
-                                                        .replaceAll("%target%", target.getName())
-                                                        .replaceAll("%group%", group)
-                                                        .replaceAll("%groupprefix%", chat.getGroupPrefix(player.getWorld(), group));
-                                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
-                                                if (!giveBroadCast.equals("")) {
-                                                    Bukkit.broadcastMessage(t.rc(giveBroadCast));
+                                                if(groupLevel > targetGroupLevel) {
+                                                    String giveCommand = yaml.getConfig().getString("Settings.GiveCommand")
+                                                            .replaceAll("%group%", group)
+                                                            .replaceAll("%target%", target.getName());
+                                                    String giveBroadCast = yaml.getConfig().getString("Settings.GiveBroadCast")
+                                                            .replaceAll("%player%", player.getName())
+                                                            .replaceAll("%target%", target.getName())
+                                                            .replaceAll("%group%", group)
+                                                            .replaceAll("%groupprefix%", chat.getGroupPrefix(player.getWorld(), group));
+                                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
+                                                    if (!giveBroadCast.equals("")) {
+                                                        Bukkit.broadcastMessage(t.rc(giveBroadCast));
+                                                    }
+                                                    yaml.getData().set("Players." + player.getName() + "." + group, groupCountInData + 1);
+                                                    yaml.saveData();
+                                                } else {
+                                                    sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
                                                 }
-                                                yaml.getData().set("Players." + player.getName() + "." + group, groupCountInData + 1);
-                                                yaml.saveData();
                                             } else {
                                                 // ліміт видачі вже закінчився
                                                 sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.AlreadyIssued")));

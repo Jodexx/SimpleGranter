@@ -33,11 +33,6 @@ public final class SimpleGranter extends JavaPlugin {
         setupPermissions();
         setupChat();
     }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
     public static void reloadConfigs() {
         yaml = new YamlManager();
     }

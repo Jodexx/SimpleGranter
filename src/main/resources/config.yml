@@ -3,8 +3,13 @@ Settings:
     admin:
       premium: 1
       vip: 2
+  Levels:
+    admin: 10
+    premium: 2
+    vip: 1
+    default: 0
   GiveCommand: lp user %target% parent add %group%
-  GiveBroadCast: "&fPlayer &c%player% &fgrant group %groupprefix%&rfor player &e%target%"
+  GiveBroadCast: "&fPlayer &c%player% &fgifted group %groupprefix%&rto player &e%target%"
 
 
 
@@ -20,3 +25,4 @@ Messages:
   CannotGrant: "&cYour group can't grant this privilege"
   CannotGrantAnyOthers: "&cYour group cannot issue any others"
   GroupNotFound: "&cNo group found."
+  TargetGroupLevelBigger: "&cThe player's group level is greater than or equal to the one you want to give him."
