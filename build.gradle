@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.rikonardo.papermake' version '1.0.6'
 }
 
 group = 'com.jodexindustries'
@@ -7,6 +8,7 @@ version = '1.0.0'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
@@ -19,6 +21,7 @@ repositories {
 
 dependencies {
     compileOnly "com.destroystokyo.paper:paper-api:1.12.2-R0.1-SNAPSHOT"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 compileJava.options.encoding = 'UTF-8'

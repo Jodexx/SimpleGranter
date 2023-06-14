@@ -1,0 +1,22 @@
+Settings:
+  Groups:
+    admin:
+      premium: 1
+      vip: 2
+  GiveCommand: lp user %target% parent add %group%
+  GiveBroadCast: "&fPlayer &c%player% &fgrant group %groupprefix%&rfor player &e%target%"
+
+
+
+Messages:
+  Help:
+    - '&7» &a/grant &7(&cnick&7) (&dgroup&7) &8- &eGrant group for player'
+    - '$admin&7» &a/grant &creload &8- &eReload configs'
+  NoPermissions: "&cYou don't have enough permissions!"
+  ReloadConfig: "&aConfig reloaded successfully!"
+  PlayerNotFound: "&cPlayer not found!"
+  GiveYourself: "&cYou can't give group yourself!"
+  AlreadyIssued: "&cThe issuing limit for this group has been reached."
+  CannotGrant: "&cYour group can't grant this privilege"
+  CannotGrantAnyOthers: "&cYour group cannot issue any others"
+  GroupNotFound: "&cNo group found."
