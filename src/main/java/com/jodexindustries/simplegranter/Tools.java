@@ -1,6 +1,7 @@
 package com.jodexindustries.simplegranter;
 
-import net.md_5.bungee.api.ChatColor;
+
+import org.bukkit.ChatColor;
 
 public class Tools {
     public String rc(String string) {

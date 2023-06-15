@@ -130,9 +130,11 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                     Player player = (Player) sender;
                     String senderGroup = perms.getPrimaryGroup(player);
                     List<String> groups = new ArrayList<>();
-                    for (String group : yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup).getKeys(false).stream().filter((px) -> px.startsWith(args[1])).collect(Collectors.toList())) {
-                        if (yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group) > yaml.getData().getInt("Players." + player.getName() + "." + group, 0)) {
-                            groups.add(group);
+                    if(yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
+                        for (String group : yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup).getKeys(false).stream().filter((px) -> px.startsWith(args[1])).collect(Collectors.toList())) {
+                            if (yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group) > yaml.getData().getInt("Players." + player.getName() + "." + group, 0)) {
+                                groups.add(group);
+                            }
                         }
                     }
                     return groups;

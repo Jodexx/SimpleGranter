@@ -36,14 +36,12 @@ public final class SimpleGranter extends JavaPlugin {
     public static void reloadConfigs() {
         yaml = new YamlManager();
     }
-    private boolean setupPermissions() {
+    private void setupPermissions() {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         perms = rsp.getProvider();
-        return perms != null;
     }
-    private boolean setupChat() {
+    private void setupChat() {
         RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
         chat = rsp.getProvider();
-        return chat != null;
     }
 }
