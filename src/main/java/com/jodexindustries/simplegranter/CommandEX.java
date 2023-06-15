@@ -5,13 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,15 +33,15 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                         Player player = (Player) sender;
                         Player target = Bukkit.getPlayerExact(args[0]);
                         String group = args[1];
-                        String senderGroup = perms.getPrimaryGroup(player);
-                        String targetGroup = perms.getPrimaryGroup(target);
-                        int groupInConfig = yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group,0);
-                        int groupCountInData = yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
-                        int targetGroupLevel = yaml.getConfig().getInt("Settings.Levels." + targetGroup, 0);
-                        int groupLevel = yaml.getConfig().getInt("Settings.Levels." + group, 0);
-                        List<String> groupsList = new ArrayList<>();
-                        Collections.addAll(groupsList, perms.getGroups());
                         if (target != null) {
+                            String senderGroup = perms.getPrimaryGroup(player);
+                            String targetGroup = perms.getPrimaryGroup(target);
+                            int groupInConfig = yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group,0);
+                            int groupCountInData = yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
+                            int targetGroupLevel = yaml.getConfig().getInt("Settings.Levels." + targetGroup, 0);
+                            int groupLevel = yaml.getConfig().getInt("Settings.Levels." + group, 0);
+                            List<String> groupsList = new ArrayList<>();
+                            Collections.addAll(groupsList, perms.getGroups());
                             if(target.getUniqueId() != player.getUniqueId()) {
                                 if (yaml.getConfig().getConfigurationSection("Settings.Groups").getKeys(false).contains(senderGroup)) {
                                     // check for group?
