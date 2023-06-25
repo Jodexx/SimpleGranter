@@ -36,16 +36,15 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                         if (target != null) {
                             String senderGroup = perms.getPrimaryGroup(player);
                             String targetGroup = perms.getPrimaryGroup(target);
-                            int groupInConfig = yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group,0);
-                            int groupCountInData = yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
-                            int targetGroupLevel = yaml.getConfig().getInt("Settings.Levels." + targetGroup, 0);
-                            int groupLevel = yaml.getConfig().getInt("Settings.Levels." + group, 0);
+                            int groupInConfig = api.getGroupInConfig(senderGroup, group);
+                            int groupCountInData = api.getGroupInData(player, group);
+                            int targetGroupLevel = api.getGroupLevel(targetGroup);
+                            int groupLevel = api.getGroupLevel(group);
                             List<String> groupsList = new ArrayList<>();
                             Collections.addAll(groupsList, perms.getGroups());
                             if(target.getUniqueId() != player.getUniqueId()) {
-                                if (yaml.getConfig().getConfigurationSection("Settings.Groups").getKeys(false).contains(senderGroup)) {
-                                    // check for group?
-                                    if(groupsList.contains(group)) {
+                                if (api.isPlayerCanGrantGroups(player)) {
+                                    if(api.isGroupExist(group)) {
                                         if (groupInConfig != 0) {
                                             if (groupCountInData < groupInConfig) {
                                                 if(groupLevel > targetGroupLevel) {
@@ -67,20 +66,16 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                                     sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
                                                 }
                                             } else {
-                                                // ліміт видачі вже закінчився
                                                 sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.AlreadyIssued")));
                                             }
 
                                         } else {
-                                            // ваша група не може видати таку привілею
                                             sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrant")));
                                         }
                                     } else {
-                                        // такої групи не існує
                                         sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GroupNotFound")));
                                     }
                                 } else {
-                                    // ваша група не може видавати ніякі інші
                                     sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
                                 }
                             } else {
@@ -90,7 +85,6 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                             sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.PlayerNotFound")));
                         }
                     } else {
-                        // from console
                         sender.sendMessage(t.rc("&cYou can't grant group from console"));
                     }
                 } else {

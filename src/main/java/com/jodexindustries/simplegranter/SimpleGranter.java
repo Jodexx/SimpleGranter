@@ -1,5 +1,6 @@
 package com.jodexindustries.simplegranter;
 
+import com.jodexindustries.simplegranter.api.GranterAPI;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.plugin.Plugin;
@@ -11,6 +12,7 @@ import java.io.File;
 public final class SimpleGranter extends JavaPlugin {
     public static Plugin plugin;
     public static Tools t;
+    public static GranterAPI api;
     public static YamlManager yaml;
     public static Permission perms = null;
     public static Chat chat = null;
@@ -20,6 +22,7 @@ public final class SimpleGranter extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        api = new GranterAPI();
         t = new Tools();
         if(!new File(this.getDataFolder(), "data.yml").exists()) {
             saveResource("data.yml", false);
