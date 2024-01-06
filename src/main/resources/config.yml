@@ -9,7 +9,8 @@ Settings:
     vip: 1
     default: 0
   GiveCommand: lp user %target% parent set %group%
-  GiveBroadCast: "&fPlayer &c%player% &fgifted group %groupprefix%&rto player &e%target%"
+  GiveBroadCast:
+    - "&fPlayer &c%player% &fgifted group %groupprefix%&rto player &e%target%"
 
 Messages:
   Help:

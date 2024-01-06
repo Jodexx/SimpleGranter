@@ -51,15 +51,17 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                                     String giveCommand = yaml.getConfig().getString("Settings.GiveCommand")
                                                             .replaceAll("%group%", group)
                                                             .replaceAll("%target%", target.getName());
-                                                    String giveBroadCast = yaml.getConfig().getString("Settings.GiveBroadCast")
-                                                            .replaceAll("%player%", player.getName())
-                                                            .replaceAll("%target%", target.getName())
-                                                            .replaceAll("%group%", group)
-                                                            .replaceAll("%groupprefix%", chat.getGroupPrefix(player.getWorld(), group));
-                                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
-                                                    if (!giveBroadCast.equals("")) {
-                                                        Bukkit.broadcastMessage(t.rc(giveBroadCast));
+                                                    for (String giveBroadCast : yaml.getConfig().getStringList("Settings.GiveBroadCast")) {
+                                                        for (Player p : Bukkit.getOnlinePlayers()) {
+                                                            p.sendMessage(t.rc(giveBroadCast
+                                                                    .replaceAll("%player%", player.getName())
+                                                                    .replaceAll("%target%", target.getName())
+                                                                    .replaceAll("%group%", group)
+                                                                    .replaceAll("%groupprefix%", chat.getGroupPrefix(player.getWorld(), group))
+                                                            ));
+                                                        }
                                                     }
+                                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
                                                     yaml.getData().set("Players." + player.getName() + "." + group, groupCountInData + 1);
                                                     yaml.saveData();
                                                 } else {
