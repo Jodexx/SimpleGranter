@@ -73,7 +73,7 @@ public final class SimpleGranter extends JavaPlugin {
 
     }
     private void setupMySQL() {
-        sql = yaml.getConfig().getBoolean("DonatCase.MySql.Enabled");
+        sql = yaml.getConfig().getBoolean("Settings.MySql.Enabled");
         if (sql) {
             String base = yaml.getConfig().getString("Settings.MySql.DataBase");
             String port = yaml.getConfig().getString("Settings.MySql.Port");
