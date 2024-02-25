@@ -40,8 +40,6 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                             int groupCountInData = api.getGroupInData(player, group);
                             int targetGroupLevel = api.getGroupLevel(targetGroup);
                             int groupLevel = api.getGroupLevel(group);
-                            List<String> groupsList = new ArrayList<>();
-                            Collections.addAll(groupsList, perms.getGroups());
                             if(target.getUniqueId() != player.getUniqueId()) {
                                 if (api.isPlayerCanGrantGroups(player)) {
                                     if(api.isGroupExist(group)) {
