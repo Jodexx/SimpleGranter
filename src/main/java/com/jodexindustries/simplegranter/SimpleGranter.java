@@ -33,18 +33,22 @@ public final class SimpleGranter extends JavaPlugin {
         reloadConfigs();
         getCommand("grant").setExecutor(new CommandEX());
         getCommand("grant").setTabCompleter(new CommandEX());
-        setupPermissions();
-        setupChat();
+        if(!setupPermissions()) getLogger().warning("Vault Permission won't load!");
+        if(!setupChat()) getLogger().warning("Vault Chat won't load!");
     }
     public static void reloadConfigs() {
         yaml = new YamlManager();
     }
-    private void setupPermissions() {
+    private boolean setupPermissions() {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        perms = rsp.getProvider();
+        if(rsp != null) {
+            perms = rsp.getProvider();
+        }
+        return perms != null;
     }
-    private void setupChat() {
+    private boolean setupChat() {
         RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
-        chat = rsp.getProvider();
+        if(rsp != null) chat = rsp.getProvider();
+        return chat != null;
     }
 }
