@@ -8,7 +8,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +59,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                                         }
                                                     }
                                                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
-                                                    yaml.getData().set("Players." + player.getName() + "." + group, groupCountInData + 1);
-                                                    yaml.saveData();
+                                                    api.setGroupUsages(player, group, groupCountInData + 1);
                                                 } else {
                                                     sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
                                                 }
@@ -126,7 +124,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                     List<String> groups = new ArrayList<>();
                     if(yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
                         for (String group : yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup).getKeys(false).stream().filter((px) -> px.startsWith(args[1])).collect(Collectors.toList())) {
-                            if (yaml.getConfig().getInt("Settings.Groups." + senderGroup + "." + group) > yaml.getData().getInt("Players." + player.getName() + "." + group, 0)) {
+                            if (api.getGroupInConfig(senderGroup, group) > api.getGroupInData(player, group)) {
                                 groups.add(group);
                             }
                         }

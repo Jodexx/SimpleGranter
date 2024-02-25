@@ -1,4 +1,11 @@
 Settings:
+  MySql:
+    Enabled: false
+    Host: 'localhost'
+    Port: 3306
+    DataBase: 'nameDataBase'
+    User: 'root'
+    Password: 'password'
   Groups:
     admin:
       premium: 1

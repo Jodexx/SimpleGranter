@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jodexindustries.simplegranter.SimpleGranter.perms;
-import static com.jodexindustries.simplegranter.SimpleGranter.yaml;
+import static com.jodexindustries.simplegranter.SimpleGranter.*;
 
 public class GranterAPI {
     /**
@@ -54,9 +53,28 @@ public class GranterAPI {
      * Get the number of groups that the player can still give.
      * @param player A player who gives
      * @param group The group the player wants to give
-     * @return Number of groups
+     * @return Number of group usage
      */
     public int getGroupInData(Player player, String group) {
-        return yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
+        if(!sql) {
+            return yaml.getData().getInt("Players." + player.getName() + "." + group, 0);
+        } else {
+            return mysql.getCount(player.getName(), group);
+        }
+    }
+
+    /**
+     * Set group usages for player
+     * @param player Player, who used grant
+     * @param group The group the player wants to give
+     * @param count Number of group usage
+     */
+    public void setGroupUsages(Player player, String group, int count) {
+        if(!sql) {
+            yaml.getData().set("Players." + player.getName() + "." + group, count);
+            yaml.saveData();
+        } else {
+            mysql.setCount(player.getName(), group, count);
+        }
     }
 }
