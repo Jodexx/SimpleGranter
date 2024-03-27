@@ -3,8 +3,9 @@ version: '${version}'
 main: com.jodexindustries.simplegranter.SimpleGranter
 authors: [_Jodex__]
 description: Simple grant plugin for minecraft server
-depend:
+softdepend:
   - Vault
+  - LuckPerms
 commands:
   grant:
     aliases: ['simplegranter']

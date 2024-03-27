@@ -1,22 +1,33 @@
 package com.jodexindustries.simplegranter.api;
 
+import com.jodexindustries.simplegranter.SimpleGranter;
+import com.jodexindustries.simplegranter.fields.PermissionDriver;
+import net.luckperms.api.model.group.Group;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.jodexindustries.simplegranter.SimpleGranter.*;
 
 public class GranterAPI {
+    public String getPlayerGroup(Player player) {
+        String group = "";
+        if(permissionDriver == PermissionDriver.vault) group = perms.getPrimaryGroup(player);
+        if(permissionDriver == PermissionDriver.luckperms) group = luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
+        return group;
+    }
     /**
      * Check if the player can give groups.
      * @param player A player who gives
      * @return Boolean
      */
     public boolean isPlayerCanGrantGroups(Player player) {
-        String Group = perms.getPrimaryGroup(player);
-        return yaml.getConfig().getConfigurationSection("Settings.Groups").getKeys(false).contains(Group);
+        String group = getPlayerGroup(player);
+        return yaml.getConfig().getConfigurationSection("Settings.Groups").getKeys(false).contains(group);
     }
 
     /**
@@ -26,7 +37,8 @@ public class GranterAPI {
      */
     public boolean isGroupExist(String group) {
         List<String> groupsList = new ArrayList<>();
-        Collections.addAll(groupsList, perms.getGroups());
+        if(permissionDriver == PermissionDriver.vault) Collections.addAll(groupsList, perms.getGroups());
+        if(permissionDriver == PermissionDriver.luckperms) luckPerms.getGroupManager().getLoadedGroups().stream().map(Group::getName).collect(Collectors.toList());
         return groupsList.contains(group);
     }
 

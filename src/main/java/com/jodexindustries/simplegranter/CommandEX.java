@@ -19,15 +19,15 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         if(args.length == 0) {
             sendHelp(sender);
         } else {
-            if(args[0].equalsIgnoreCase("reload")) {
-                if(sender.hasPermission("simplegranter.admin")) {
+            if (args[0].equalsIgnoreCase("reload")) {
+                if (sender.hasPermission("simplegranter.admin")) {
                     yaml.reload();
                     sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.ReloadConfig")));
                 } else {
                     sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.NoPermissions")));
                 }
             } else {
-                if(args.length >= 2) {
+                if (args.length >= 2) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         Player target = Bukkit.getPlayerExact(args[0]);
@@ -39,12 +39,12 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                             int groupCountInData = api.getGroupInData(player, group);
                             int targetGroupLevel = api.getGroupLevel(targetGroup);
                             int groupLevel = api.getGroupLevel(group);
-                            if(target.getUniqueId() != player.getUniqueId()) {
-                                if (api.isPlayerCanGrantGroups(player)) {
-                                    if(api.isGroupExist(group)) {
+                            if (api.isPlayerCanGrantGroups(player)) {
+                                if (target.getUniqueId() != player.getUniqueId()) {
+                                    if (api.isGroupExist(group)) {
                                         if (groupInConfig != 0) {
                                             if (groupCountInData < groupInConfig) {
-                                                if(groupLevel > targetGroupLevel) {
+                                                if (groupLevel > targetGroupLevel) {
                                                     String giveCommand = yaml.getConfig().getString("Settings.GiveCommand")
                                                             .replaceAll("%group%", group)
                                                             .replaceAll("%target%", target.getName());
@@ -74,10 +74,10 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                         sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GroupNotFound")));
                                     }
                                 } else {
-                                    sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
+                                    sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GiveYourself")));
                                 }
                             } else {
-                                sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GiveYourself")));
+                                sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
                             }
                         } else {
                             sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.PlayerNotFound")));
@@ -120,7 +120,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
             if (args.length == 2) {
                 if(!args[0].equalsIgnoreCase("reload")) {
                     Player player = (Player) sender;
-                    String senderGroup = perms.getPrimaryGroup(player);
+                    String senderGroup = api.getPlayerGroup(player);
                     List<String> groups = new ArrayList<>();
                     if(yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
                         for (String group : yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup).getKeys(false).stream().filter((px) -> px.startsWith(args[1])).collect(Collectors.toList())) {

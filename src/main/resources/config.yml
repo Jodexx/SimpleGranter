@@ -1,4 +1,5 @@
 Settings:
+  PermissionDriver: luckperms # or vault
   MySql:
     Enabled: false
     Host: 'localhost'
