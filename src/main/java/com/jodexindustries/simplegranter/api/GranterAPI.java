@@ -1,9 +1,7 @@
 package com.jodexindustries.simplegranter.api;
 
-import com.jodexindustries.simplegranter.SimpleGranter;
 import com.jodexindustries.simplegranter.fields.PermissionDriver;
 import net.luckperms.api.model.group.Group;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -14,6 +12,11 @@ import java.util.stream.Collectors;
 import static com.jodexindustries.simplegranter.SimpleGranter.*;
 
 public class GranterAPI {
+    /**
+     * Get player group
+     * @param player Bukkit Player
+     * @return Group name
+     */
     public String getPlayerGroup(Player player) {
         String group = "";
         if(permissionDriver == PermissionDriver.vault) group = perms.getPrimaryGroup(player);
