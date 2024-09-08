@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.simplegranter.SimpleGranter.*;
+import static com.jodexindustries.simplegranter.SimpleGranter.api;
+import static com.jodexindustries.simplegranter.SimpleGranter.t;
+import static com.jodexindustries.simplegranter.SimpleGranter.yaml;
 
 public class CommandEX implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             sendHelp(sender);
         } else {
             if (args[0].equalsIgnoreCase("reload")) {
@@ -33,8 +35,8 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                         Player target = Bukkit.getPlayerExact(args[0]);
                         String group = args[1];
                         if (target != null) {
-                            String senderGroup = perms.getPrimaryGroup(player);
-                            String targetGroup = perms.getPrimaryGroup(target);
+                            String senderGroup = api.getPlayerGroup(player);
+                            String targetGroup = api.getPlayerGroup(target);
                             int groupInConfig = api.getGroupInConfig(senderGroup, group);
                             int groupCountInData = api.getGroupInData(player, group);
                             int targetGroupLevel = api.getGroupLevel(targetGroup);
@@ -54,7 +56,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                                                                     .replaceAll("%player%", player.getName())
                                                                     .replaceAll("%target%", target.getName())
                                                                     .replaceAll("%group%", group)
-                                                                    .replaceAll("%groupprefix%", chat.getGroupPrefix(player.getWorld(), group))
+                                                                    .replaceAll("%groupprefix%", api.getGroupPrefix(group))
                                                             ));
                                                         }
                                                     }
@@ -96,8 +98,8 @@ public class CommandEX implements CommandExecutor, TabCompleter {
     private void sendHelp(CommandSender sender) {
         List<String> stringList = yaml.getConfig().getStringList("Messages.Help");
         sender.sendMessage(t.rc("&eSimpleGranter &fby &c_Jodex__"));
-        for(String line : stringList) {
-            if(line.startsWith("$admin")) {
+        for (String line : stringList) {
+            if (line.startsWith("$admin")) {
                 if (sender.hasPermission("simplegranter.admin")) {
                     sender.sendMessage(t.rc(line).replaceFirst("\\$admin", ""));
                 }
@@ -109,20 +111,20 @@ public class CommandEX implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             List<String> list = new ArrayList<>();
-            if(args.length == 1) {
-                for (Player player: Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[0])).collect(Collectors.toList())) {
+            if (args.length == 1) {
+                for (Player player : Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[0])).collect(Collectors.toList())) {
                     list.add(player.getName());
                 }
                 return list;
             }
             if (args.length == 2) {
-                if(!args[0].equalsIgnoreCase("reload")) {
+                if (!args[0].equalsIgnoreCase("reload")) {
                     Player player = (Player) sender;
                     String senderGroup = api.getPlayerGroup(player);
                     List<String> groups = new ArrayList<>();
-                    if(yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
+                    if (yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
                         for (String group : yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup).getKeys(false).stream().filter((px) -> px.startsWith(args[1])).collect(Collectors.toList())) {
                             if (api.getGroupInConfig(senderGroup, group) > api.getGroupInData(player, group)) {
                                 groups.add(group);
