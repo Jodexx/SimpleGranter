@@ -5,6 +5,16 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "players")
 public class PlayersTable {
+
+    @DatabaseField(columnName = "player")
+    private String player;
+
+    @DatabaseField(columnName = "group")
+    private String group;
+
+    @DatabaseField(defaultValue = "0")
+    private int count;
+
     public String getPlayer() {
         return player;
     }
@@ -28,11 +38,4 @@ public class PlayersTable {
     public void setCount(int count) {
         this.count = count;
     }
-
-    @DatabaseField(columnName = "player")
-    private String player;
-    @DatabaseField(columnName = "group")
-    private String group;
-    @DatabaseField(defaultValue = "0")
-    private int count;
 }

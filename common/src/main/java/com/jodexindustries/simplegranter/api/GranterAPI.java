@@ -13,7 +13,7 @@ public class GranterAPI {
 
     public String getGroupPrefix(String group) {
         String prefix = null;
-        if (permissionDriver == PermissionDriver.vault) {
+        if (permissionDriver == PermissionDriver.VAULT) {
             prefix = chat.getGroupPrefix(Bukkit.getWorlds().get(0), group);
         } else {
             Group lpGroup = luckPerms.getGroupManager().getGroup(group);
@@ -31,8 +31,8 @@ public class GranterAPI {
      */
     public String getPlayerGroup(Player player) {
         String group = "";
-        if (permissionDriver == PermissionDriver.vault) group = perms.getPrimaryGroup(player);
-        if (permissionDriver == PermissionDriver.luckperms)
+        if (permissionDriver == PermissionDriver.VAULT) group = perms.getPrimaryGroup(player);
+        if (permissionDriver == PermissionDriver.LUCKPERMS)
             group = luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
         return group;
     }
@@ -56,9 +56,9 @@ public class GranterAPI {
      */
     public boolean isGroupExist(String group) {
         switch (permissionDriver) {
-            case vault:
+            case VAULT:
                 return Arrays.asList(perms.getGroups()).contains(group);
-            case luckperms:
+            case LUCKPERMS:
                 return luckPerms.getGroupManager().getLoadedGroups()
                         .stream()
                         .map(Group::getName)

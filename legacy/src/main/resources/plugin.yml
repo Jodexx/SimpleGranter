@@ -1,6 +1,6 @@
 name: SimpleGranter
 version: '${version}'
-main: com.jodexindustries.simplegranter.SimpleGranter
+main: com.jodexindustries.simplegranter.LegacyGranter
 authors: [_Jodex__]
 description: Simple grant plugin for minecraft server
 softdepend:
