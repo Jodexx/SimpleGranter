@@ -49,6 +49,11 @@ public class SimpleGranter extends JavaPlugin {
         setupMySQL();
     }
 
+    @Override
+    public void onDisable() {
+        if (mysql != null) mysql.close();
+    }
+
     public static void reloadConfigs() {
         yaml = new YamlManager();
         permissionDriver = PermissionDriver.valueOf(
