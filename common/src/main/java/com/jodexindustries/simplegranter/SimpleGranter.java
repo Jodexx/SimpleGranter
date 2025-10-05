@@ -18,7 +18,6 @@ import java.io.File;
 public class SimpleGranter extends JavaPlugin {
 
     public static Plugin plugin;
-    public static Tools t;
     public static GranterAPI api;
     public static YamlManager yaml;
 
@@ -35,7 +34,6 @@ public class SimpleGranter extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         api = new GranterAPI();
-        t = new Tools();
 
         saveDefaultConfigFile("data.yml");
         saveDefaultConfigFile("config.yml");

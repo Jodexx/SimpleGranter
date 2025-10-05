@@ -1,6 +1,7 @@
 package com.jodexindustries.simplegranter;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.jodexindustries.simplegranter.SimpleGranter.api;
-import static com.jodexindustries.simplegranter.SimpleGranter.t;
 import static com.jodexindustries.simplegranter.SimpleGranter.yaml;
 
 public class CommandEX implements CommandExecutor, TabCompleter {
@@ -27,12 +27,12 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         // /simplegranter reload
         if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("simplegranter.admin")) {
-                sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.NoPermissions")));
+                sender.sendMessage(rc(yaml.getConfig().getString("Messages.NoPermissions")));
                 return false;
             }
 
             yaml.reload();
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.ReloadConfig")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.ReloadConfig")));
             return false;
         }
 
@@ -43,7 +43,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(t.rc("&cYou can't grant group from console"));
+            sender.sendMessage(rc("&cYou can't grant group from console"));
             return false;
         }
 
@@ -52,22 +52,22 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         String group = args[1];
 
         if (target == null) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.PlayerNotFound")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.PlayerNotFound")));
             return false;
         }
 
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GiveYourself")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.GiveYourself")));
             return false;
         }
 
         if (!api.isPlayerCanGrantGroups(player)) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
             return false;
         }
 
         if (!api.isGroupExist(group)) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.GroupNotFound")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.GroupNotFound")));
             return false;
         }
 
@@ -80,17 +80,17 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         int groupLevel = api.getGroupLevel(group);
 
         if (groupInConfig == 0) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.CannotGrant")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.CannotGrant")));
             return false;
         }
 
         if (groupCountInData >= groupInConfig) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.AlreadyIssued")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.AlreadyIssued")));
             return false;
         }
 
         if (groupLevel <= targetGroupLevel) {
-            sender.sendMessage(t.rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
+            sender.sendMessage(rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
             return false;
         }
 
@@ -99,7 +99,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
                 .replaceAll("%target%", target.getName());
 
         for (String broadcast : yaml.getConfig().getStringList("Settings.GiveBroadCast")) {
-            String message = t.rc(broadcast)
+            String message = rc(broadcast)
                     .replaceAll("%player%", player.getName())
                     .replaceAll("%target%", target.getName())
                     .replaceAll("%group%", group)
@@ -116,17 +116,21 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    private void sendHelp(CommandSender sender) {
+    private static String rc(String string) {
+        return ChatColor.translateAlternateColorCodes('&', string);
+    }
+
+    private static void sendHelp(CommandSender sender) {
         List<String> helpList = yaml.getConfig().getStringList("Messages.Help");
-        sender.sendMessage(t.rc("&eSimpleGranter &fby &c_Jodex__"));
+        sender.sendMessage(rc("&eSimpleGranter &fby &c_Jodex__"));
 
         for (String line : helpList) {
             if (line.startsWith("$admin")) {
                 if (sender.hasPermission("simplegranter.admin")) {
-                    sender.sendMessage(t.rc(line.replaceFirst("\\$admin", "")));
+                    sender.sendMessage(rc(line.replaceFirst("\\$admin", "")));
                 }
             } else {
-                sender.sendMessage(t.rc(line));
+                sender.sendMessage(rc(line));
             }
         }
     }
