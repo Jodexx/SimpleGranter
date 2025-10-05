@@ -1,4 +1,4 @@
-package com.jodexindustries.simplegranter.database.entities;
+package com.jodexindustries.simplegranter.database;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

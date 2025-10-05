@@ -5,7 +5,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
-import com.jodexindustries.simplegranter.database.entities.PlayersTable;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 

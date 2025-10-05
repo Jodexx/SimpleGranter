@@ -1,5 +1,6 @@
 package com.jodexindustries.simplegranter;
 
+import com.jodexindustries.simplegranter.api.GranterAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,10 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.simplegranter.SimpleGranter.api;
-import static com.jodexindustries.simplegranter.SimpleGranter.yaml;
-
-public class CommandEX implements CommandExecutor, TabCompleter {
+public class MainCommand implements CommandExecutor, TabCompleter {
+    
+    private final SimpleGranter plugin;
+    private final GranterAPI api;
+    
+    public MainCommand(SimpleGranter plugin) {
+        this.plugin = plugin;
+        this.api = plugin.api();
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -27,12 +33,13 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         // /simplegranter reload
         if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("simplegranter.admin")) {
-                sender.sendMessage(rc(yaml.getConfig().getString("Messages.NoPermissions")));
+                sender.sendMessage(rc(plugin.yaml().getMessage("NoPermissions")));
                 return false;
             }
 
-            yaml.reload();
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.ReloadConfig")));
+            plugin.yaml().load();
+            plugin.loadDriver();
+            sender.sendMessage(rc(plugin.yaml().getMessage("ReloadConfig")));
             return false;
         }
 
@@ -52,22 +59,22 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         String group = args[1];
 
         if (target == null) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.PlayerNotFound")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("PlayerNotFound")));
             return false;
         }
 
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.GiveYourself")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("GiveYourself")));
             return false;
         }
 
         if (!api.isPlayerCanGrantGroups(player)) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.CannotGrantAnyOthers")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("CannotGrantAnyOthers")));
             return false;
         }
 
         if (!api.isGroupExist(group)) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.GroupNotFound")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("GroupNotFound")));
             return false;
         }
 
@@ -75,30 +82,30 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         String targetGroup = api.getPlayerGroup(target);
 
         int groupInConfig = api.getGroupInConfig(senderGroup, group);
-        int groupCountInData = api.getGroupInData(player, group);
+        int groupCountInData = api.getGroupInData(player.getName(), group);
         int targetGroupLevel = api.getGroupLevel(targetGroup);
         int groupLevel = api.getGroupLevel(group);
 
         if (groupInConfig == 0) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.CannotGrant")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("CannotGrant")));
             return false;
         }
 
         if (groupCountInData >= groupInConfig) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.AlreadyIssued")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("AlreadyIssued")));
             return false;
         }
 
         if (groupLevel <= targetGroupLevel) {
-            sender.sendMessage(rc(yaml.getConfig().getString("Messages.TargetGroupLevelBigger")));
+            sender.sendMessage(rc(plugin.yaml().getMessage("TargetGroupLevelBigger")));
             return false;
         }
 
-        String giveCommand = yaml.getConfig().getString("Settings.GiveCommand")
+        String giveCommand = plugin.yaml().getConfig().getString("Settings.GiveCommand")
                 .replaceAll("%group%", group)
                 .replaceAll("%target%", target.getName());
 
-        for (String broadcast : yaml.getConfig().getStringList("Settings.GiveBroadCast")) {
+        for (String broadcast : plugin.yaml().getConfig().getStringList("Settings.GiveBroadCast")) {
             String message = rc(broadcast)
                     .replaceAll("%player%", player.getName())
                     .replaceAll("%target%", target.getName())
@@ -111,7 +118,7 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         }
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), giveCommand);
-        api.setGroupUsages(player, group, groupCountInData + 1);
+        api.setGroupUsages(player.getName(), group, groupCountInData + 1);
 
         return false;
     }
@@ -120,8 +127,8 @@ public class CommandEX implements CommandExecutor, TabCompleter {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 
-    private static void sendHelp(CommandSender sender) {
-        List<String> helpList = yaml.getConfig().getStringList("Messages.Help");
+    private void sendHelp(CommandSender sender) {
+        List<String> helpList = plugin.yaml().getConfig().getStringList("Messages.Help");
         sender.sendMessage(rc("&eSimpleGranter &fby &c_Jodex__"));
 
         for (String line : helpList) {
@@ -151,14 +158,14 @@ public class CommandEX implements CommandExecutor, TabCompleter {
             String senderGroup = api.getPlayerGroup(player);
             List<String> result = new ArrayList<>();
 
-            if (yaml.getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
-                yaml.getConfig()
+            if (plugin.yaml().getConfig().getConfigurationSection("Settings.Groups." + senderGroup) != null) {
+                plugin.yaml().getConfig()
                         .getConfigurationSection("Settings.Groups." + senderGroup)
                         .getKeys(false)
                         .stream()
                         .filter(group -> group.toLowerCase().startsWith(args[1].toLowerCase()))
                         .forEach(group -> {
-                            if (api.getGroupInConfig(senderGroup, group) > api.getGroupInData(player, group)) {
+                            if (api.getGroupInConfig(senderGroup, group) > api.getGroupInData(player.getName(), group)) {
                                 result.add(group);
                             }
                         });

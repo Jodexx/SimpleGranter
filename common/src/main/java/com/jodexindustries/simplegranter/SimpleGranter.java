@@ -2,49 +2,52 @@ package com.jodexindustries.simplegranter;
 
 import com.j256.ormlite.logger.Level;
 import com.jodexindustries.simplegranter.api.GranterAPI;
+import com.jodexindustries.simplegranter.data.PermissionDriver;
+import com.jodexindustries.simplegranter.data.YamlManager;
 import com.jodexindustries.simplegranter.database.GranterDataBase;
-import com.jodexindustries.simplegranter.fields.PermissionDriver;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-
 public class SimpleGranter extends JavaPlugin {
 
+    private final YamlManager yaml = new YamlManager(this);
+    private final GranterAPI api = new GranterAPI(this);
+
     public static Plugin plugin;
-    public static GranterAPI api;
-    public static YamlManager yaml;
 
-    public static Permission perms = null;
-    public static Chat chat = null;
-    public static LuckPerms luckPerms = null;
+    private Permission perms = null;
+    private Chat chat = null;
+    private LuckPerms luckPerms = null;
 
-    public static boolean sql = false;
-    public static GranterDataBase mysql = null;
+    private boolean sql = false;
+    private GranterDataBase mysql = null;
 
-    public static PermissionDriver permissionDriver;
+    private PermissionDriver permissionDriver;
 
     @Override
     public void onEnable() {
         plugin = this;
-        api = new GranterAPI();
 
-        saveDefaultConfigFile("data.yml");
-        saveDefaultConfigFile("config.yml");
+        MainCommand executor = new MainCommand(this);
 
-        getCommand("grant").setExecutor(new CommandEX());
-        getCommand("grant").setTabCompleter(new CommandEX());
+        PluginCommand pluginCommand = getCommand("grant");
+        if (pluginCommand != null) {
+            pluginCommand.setExecutor(executor);
+        }
+
+        yaml.load();
 
         setupVault();
         setupLuckPerms();
 
-        reloadConfigs();
+        loadDriver();
 
         setupMySQL();
     }
@@ -54,8 +57,7 @@ public class SimpleGranter extends JavaPlugin {
         if (mysql != null) mysql.close();
     }
 
-    public static void reloadConfigs() {
-        yaml = new YamlManager();
+    public void loadDriver() {
         permissionDriver = PermissionDriver.valueOf(
                 yaml.getConfig().getString("Settings.PermissionDriver", "VAULT").toUpperCase()
         );
@@ -65,19 +67,12 @@ public class SimpleGranter extends JavaPlugin {
         }
 
         if (permissionDriver == PermissionDriver.LUCKPERMS && luckPerms == null) {
-            plugin.getLogger().severe("Vault and LuckPerms not loaded on server! Disabling...");
-            Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+            getLogger().severe("Vault and LuckPerms not loaded on server! Disabling...");
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        plugin.getLogger().info("Using " + permissionDriver + " driver for permissions.");
-    }
-
-    private void saveDefaultConfigFile(String name) {
-        File file = new File(getDataFolder(), name);
-        if (!file.exists()) {
-            saveResource(name, false);
-        }
+        getLogger().info("Using " + permissionDriver + " driver for permissions.");
     }
 
     private void setupVault() {
@@ -142,5 +137,37 @@ public class SimpleGranter extends JavaPlugin {
         }.runTaskTimerAsynchronously(plugin, 0L, 12000L);
 
         com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+    }
+
+    public YamlManager yaml() {
+        return yaml;
+    }
+
+    public GranterAPI api() {
+        return api;
+    }
+
+    public Permission perms() {
+        return perms;
+    }
+
+    public Chat chat() {
+        return chat;
+    }
+
+    public LuckPerms luckPerms() {
+        return luckPerms;
+    }
+
+    public boolean sql() {
+        return sql;
+    }
+
+    public GranterDataBase mysql() {
+        return mysql;
+    }
+
+    public PermissionDriver permissionDriver() {
+        return permissionDriver;
     }
 }
