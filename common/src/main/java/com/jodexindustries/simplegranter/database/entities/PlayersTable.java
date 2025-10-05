@@ -15,16 +15,8 @@ public class PlayersTable {
     @DatabaseField(defaultValue = "0")
     private int count;
 
-    public String getPlayer() {
-        return player;
-    }
-
     public void setPlayer(String player) {
         this.player = player;
-    }
-
-    public String getGroup() {
-        return group;
     }
 
     public void setGroup(String group) {

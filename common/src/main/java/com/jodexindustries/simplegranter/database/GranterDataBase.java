@@ -87,17 +87,6 @@ public class GranterDataBase {
     }
 
     /**
-     * Delete all keys in the table.
-     */
-    public void deleteAll() {
-        try {
-            TableUtils.clearTable(connectionSource, PlayersTable.class);
-        } catch (SQLException e) {
-            plugin.getLogger().warning("Error while clearing database: " + e.getMessage());
-        }
-    }
-
-    /**
      * Properly close the connection when plugin disables.
      */
     public void close() {

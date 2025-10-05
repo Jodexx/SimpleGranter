@@ -36,14 +36,6 @@ public class YamlManager {
         }
     }
 
-    public void saveConfig() {
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public YamlConfiguration getData() {
         return data;
     }
